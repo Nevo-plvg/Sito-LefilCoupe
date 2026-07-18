@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filo & Trama — Maglieria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#232323;
+    --wool:#EDE6D6;
+    --paper:#F7F4EC;
+    --moss:#4B5D45;
+    --brick:#A63D2F;
+    --mustard:#C9A227;
+    --line: rgba(35,35,35,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Archivo', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  /* ---------- Stitch texture (signature element) ----------
+     A knit "V" stitch row, tiled as an SVG mask so it can be
+     recolored per section with plain background-color. */
+  .stitch{
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='24'><path d='M0 24 L10 6 L20 24 L30 6 L40 24' stroke='black' stroke-width='3' fill='none[...]
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='24'><path d='M0 24 L10 6 L20 24 L30 6 L40 24' stroke='black' stroke-width='3' fill='none'/></svg[...]
+    -webkit-mask-size: 40px 24px;
+    mask-size: 40px 24px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 28px 6vw;
+    position:sticky; top:0; z-index:20;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-weight:700; font-size:1.4rem;
+    letter-spacing:-0.01em;
+  }
+  nav ul{ list-style:none; display:flex; gap:2.2rem; }
+  nav a{
+    color:var(--ink); text-decoration:none;
+    font-size:0.92rem; letter-spacing:0.02em;
+    position:relative; padding-bottom:4px;
+  }
+  nav a::after{
+    content:''; position:absolute; left:0; bottom:0;
+    width:0; height:2px; background:var(--brick);
+    transition:width 0.3s ease;
+  }
+  nav a:hover::after{ width:100%; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding: 9vw 6vw 7vw;
+    background:var(--ink);
+    color:var(--wool);
+    overflow:hidden;
+  }
+  .hero .stitch-bg{
+    position:absolute; inset:0;
+    background-color:var(--wool);
+    opacity:0.06;
+  }
+  .eyebrow{
+    font-size:0.82rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--mustard);
+    margin-bottom:1.4rem;
+    display:block;
+  }
+  .hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height:1.04;
+    max-width:14ch;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--mustard);
+  }
+  .hero p{
+    margin-top:1.8rem;
+    max-width:38ch;
+    font-size:1.08rem;
+    line-height:1.6;
+    color:rgba(237,230,214,0.82);
+  }
+  .hero-cta{
+    display:inline-block;
+    margin-top:2.4rem;
+    padding:0.9rem 1.8rem;
+    background:var(--wool);
+    color:var(--ink);
+    text-decoration:none;
+    font-weight:600;
+    font-size:0.95rem;
+    border-radius:2px;
+    transition:transform 0.25s ease, background 0.25s ease;
+  }
+  .hero-cta:hover{ background:var(--mustard); transform:translateY(-2px); }
+
+  /* thread divider */
+  .thread{
+    width:100%; height:34px;
+    display:block;
+  }
+  .thread path{
+    stroke:var(--ink);
+    stroke-width:2;
+    fill:none;
+    stroke-dasharray:1400;
+    stroke-dashoffset:1400;
+    animation:draw 2.4s ease forwards 0.3s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+
+  /* ---------- Products ---------- */
+  .products{
+    padding:6vw 6vw 7vw;
+  }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:3rem; flex-wrap:wrap; gap:0.8rem;
+  }
+  .section-head h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(1.8rem, 3.4vw, 2.6rem);
+  }
+  .section-head span{
+    font-size:0.9rem; color:rgba(35,35,35,0.6);
+    max-width:34ch;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:2.2rem;
+  }
+  @media (max-width: 880px){
+    .grid{ grid-template-columns:1fr; }
+  }
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    transition:box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .card:hover{
+    box-shadow:0 18px 30px -18px rgba(35,35,35,0.35);
+    transform:translateY(-4px);
+  }
+  .swatch{
+    height:230px;
+    position:relative;
+  }
+  .swatch .stitch{ position:absolute; inset:0; }
+  .swatch.moss{ background:var(--moss); }
+  .swatch.brick{ background:var(--brick); }
+  .swatch.mustard{ background:var(--mustard); }
+
+  .card-body{
+    padding:1.6rem 1.6rem 1.9rem;
+    display:flex; flex-direction:column; flex:1;
+  }
+  .card-tag{
+    font-size:0.76rem;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:rgba(35,35,35,0.55);
+    margin-bottom:0.5rem;
+  }
+  .card-body h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.35rem;
+    margin-bottom:0.5rem;
+  }
+  .card-body p{
+    font-size:0.92rem;
+    line-height:1.55;
+    color:rgba(35,35,35,0.72);
+    flex:1;
+  }
+  .card-footer{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:1.4rem;
+  }
+  .price{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.15rem;
+  }
+  .add-btn{
+    border:1px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    padding:0.55rem 1.1rem;
+    font-size:0.85rem;
+    font-weight:600;
+    border-radius:2px;
+    cursor:pointer;
+    transition:background 0.25s ease, color 0.25s ease;
+  }
+  .add-btn:hover{ background:var(--ink); color:var(--wool); }
+  .add-btn:focus-visible, a:focus-visible, nav a:focus-visible{
+    outline:2px solid var(--brick);
+    outline-offset:2px;
+  }
+  .add-btn.added{ background:var(--moss); color:var(--wool); border-color:var(--moss); }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--ink);
+    color:rgba(237,230,214,0.75);
+    padding:3rem 6vw;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:1rem;
+    font-size:0.85rem;
+  }
+  footer strong{ color:var(--wool); font-family:'Fraunces', serif; }
+
+  .cart-note{
+    position:fixed; bottom:1.4rem; right:1.4rem;
+    background:var(--ink); color:var(--wool);
+    padding:0.8rem 1.2rem; border-radius:4px;
+    font-size:0.85rem;
+    opacity:0; transform:translateY(10px);
+    transition:opacity 0.25s ease, transform 0.25s ease;
+    pointer-events:none;
+    z-index:30;
+  }
+  .cart-note.show{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Filo & Trama</div>
+  <nav>
+    <ul>
+      <li><a href="#prodotti">Prodotti</a></li>
+      <li><a href="#storia">Storia</a></li>
+      <li><a href="#contatti">Contatti</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="stitch-bg stitch"></div>
+  <span class="eyebrow">Maglieria artigianale — collezione test</span>
+  <h1>Ogni maglia<br><em>tiene insieme</em><br>una storia.</h1>
+  <p>Lavoriamo lana e alpaca su telai a mano, un punto alla volta. Tre capi, nati per durare più di una stagione.</p>
+  <a href="#prodotti" class="hero-cta">Vedi i capi</a>
+</section>
+
+<svg class="thread" viewBox="0 0 1200 34" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 20 C 150 0, 300 40, 450 20 S 750 0, 900 20 S 1100 0, 1200 18" />
+</svg>
+
+<section class="products" id="prodotti">
+  <div class="section-head">
+    <h2>I tre capi</h2>
+    <span>Ogni swatch qui sotto riprende la trama reale del capo: punto a coste, punto a V, punto pieno.</span>
+  </div>
+
+  <div class="grid">
+
+    <article class="card">
+      <div class="swatch moss"><div class="stitch"></div></div>
+      <div class="card-body">
+        <div class="card-tag">Lana merino · girocollo</div>
+        <h3>Alba</h3>
+        <p>Un girocollo leggero in merino extrafine, lavorato a punto pieno. Sta bene sotto una giacca o da solo, la mattina presto.</p>
+        <div class="card-footer">
+          <span class="price">€ 89</span>
+          <button class="add-btn" data-name="Alba">Aggiungi</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="swatch brick"><div class="stitch"></div></div>
+      <div class="card-body">
+        <div class="card-tag">Lana e alpaca · cardigan</div>
+        <h3>Brughiera</h3>
+        <p>Cardigan aperto in lana e alpaca, con bottoni in corno naturale. Pensato per essere portato aperto, come una coperta con le maniche.</p>
+        <div class="card-footer">
+          <span class="price">€ 125</span>
+          <button class="add-btn" data-name="Brughiera">Aggiungi</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="swatch mustard"><div class="stitch"></div></div>
+      <div class="card-body">
+        <div class="card-tag">Lana cotta · sciarpa</div>
+        <h3>Vento</h3>
+        <p>Sciarpa a coste larghe in lana cotta, spessa e calda. Lunga abbastanza per due giri di collo.</p>
+        <div class="card-footer">
+          <span class="price">€ 45</span>
+          <button class="add-btn" data-name="Vento">Aggiungi</button>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer id="contatti">
+  <div><strong>Filo & Trama</strong> — sito di test, nessun ordine reale</div>
+  <div>Sede test · Italia — contatti@filoetrama.test</div>
+</footer>
+
+<div class="cart-note" id="cartNote">Aggiunto al carrello</div>
+
+<script>
+  const note = document.getElementById('cartNote');
+  let timer;
+  document.querySelectorAll('.add-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.textContent = 'Aggiunto ✓';
+      btn.classList.add('added');
+      note.textContent = `${btn.dataset.name} aggiunto al carrello`;
+      note.classList.add('show');
+      clearTimeout(timer);
+      timer = setTimeout(()=> note.classList.remove('show'), 2200);
+      setTimeout(()=>{
+        btn.textContent = 'Aggiungi';
+        btn.classList.remove('added');
+      }, 2200);
+    });
+  });
+</script>
+
+</body>
+</html>
